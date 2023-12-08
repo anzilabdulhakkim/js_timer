@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+    <style>
+        main {
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            border-radius: 5px;
+            font-family: 'Arial', sans-serif;
+            width: 300px;
+            padding: 10px;
+            font-style:normal;
+            font-weight: 400;
+            font-size:20px;
+            line-height:56px;
+            Color:#222222;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #heading{
+            text-align: center;
+            position: absolute;
+            top: 29%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #time {
+            margin-left: 10px;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        #start_pause_btn{
+            background-color: #8AB4F8;
+        }
+        button {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0 10px;
+            padding: 5px 15px;
+            border: 1px solid;
+            border-radius: 5px;
+        }
+        main input{
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div id="heading"><h3>TIMER</h3></div>
+    <main>
+        <label for="hours">Hours:</label>
+        <input type="number" id="hours" min="0" placeholder="0">
+        <label for="minutes">Minutes:</label>
+        <input type="number" id="minutes" min="0" max="59" placeholder="0">
+        <label for="seconds">Seconds:</label>
+        <input type="number" id="seconds" min="0" max="59" placeholder="0">
+        <div id="time">00m 00s</div>
+        <button id="start_pause_btn" onclick="startPause()">START</button>
+        <button onclick="reset()">RESET</button>
+    </main>
+
+    <script>
+        let timer;
+        let totalSeconds = 0;
+        let isRunning = false;
+
+        function startPause() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timer);
+                document.getElementById('start_pause_btn').innerText = 'START';
+            } 
+            else {
+                isRunning = true;
+                totalSeconds = calculateTotalSeconds();
+                timer = setInterval(updateTime, 1000);
+                document.getElementById('start_pause_btn').innerText = 'PAUSE';
+            }
+        }
+
+        function reset() {
+            clearInterval(timer);
+            isRunning = false;
+            totalSeconds = 0;
+            updateTime();
+            document.getElementById('start_pause_btn').innerText = 'START';
+        }
+
+        function calculateTotalSeconds() {
+            let hours = parseInt(document.getElementById('hours').value) || 0;
+            let minutes = parseInt(document.getElementById('minutes').value) || 0;
+            let seconds = parseInt(document.getElementById('seconds').value) || 0;
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        function updateTime() {
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let remainingSeconds = totalSeconds % 60;
+
+            let timeString = '';
+            if (hours > 0) {
+                timeString += `${hours.toString().padStart(2, '0')}h `;
+            }
+            if (minutes > 0 || hours > 0) {
+                timeString += `${minutes.toString().padStart(2, '0')}m `;
+            }
+
+            timeString += `${remainingSeconds.toString().padStart(2, '0')}s`;
+
+            document.getElementById('time').innerText = timeString;
+            if (totalSeconds === 0) {
+                clearInterval(timer);
+                isRunning = false;
+                document.getElementById('start_pause_btn').innerText = 'START';
+            } 
+            else {
+                totalSeconds--;
+            }
+        }
+    </script>
+</body>
+</html>
